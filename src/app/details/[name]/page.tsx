@@ -89,3 +89,6 @@ const PokemonDetailsPage = () => {
 };
 
 export default PokemonDetailsPage;
+
+
+
