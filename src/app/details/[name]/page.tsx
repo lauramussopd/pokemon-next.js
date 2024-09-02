@@ -55,8 +55,8 @@ const PokemonDetailsPage = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-6 md:p-12 lg:p-24 bg-gray-100">
-      <header className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-8 flex flex-col items-center">
-        <h1 className="text-4xl font-bold capitalize mb-6 text-gray-800">{pokemon.name}</h1>
+      <header className="w-full max-w-4xl bg-green-900 p-6 rounded-lg shadow-md mb-8 flex flex-col items-center">
+        <h1 className="text-4xl font-bold capitalize mb-6 text-white">{pokemon.name}</h1>
         <div className="flex flex-col md:flex-row md:space-x-8 mb-6">
           <img
             src={pokemon.sprites.other["official-artwork"].front_default}
@@ -70,21 +70,21 @@ const PokemonDetailsPage = () => {
           />
         </div>
         <div className="text-center space-y-4 mb-6">
-          <p className="text-lg"><strong>ID:</strong> {pokemon.id}</p>
-          <p className="text-lg"><strong>Height:</strong> {pokemon.height / 10} m</p>
-          <p className="text-lg"><strong>Weight:</strong> {pokemon.weight / 10} kg</p>
+          <p className="text-lg text-white"><strong>ID:</strong> {pokemon.id}</p>
+          <p className="text-lg text-white"><strong>Height:</strong> {pokemon.height / 10} m</p>
+          <p className="text-lg text-white"><strong>Weight:</strong> {pokemon.weight / 10} kg</p>
         </div>
         <div className="text-center space-y-2 mb-6">
-          <p className="text-lg font-semibold">Abilities:</p>
-          <ul className="list-disc list-inside">
+          <p className="text-lg font-semibold text-white">Abilities:</p>
+          <ul className="list-disc list-inside text-white">
             {pokemon.abilities.map((ability, index) => (
               <li key={index} className="text-lg capitalize">{ability.ability.name}</li>
             ))}
           </ul>
         </div>
         <div className="text-center space-y-2">
-          <p className="text-lg font-semibold">Stats:</p>
-          <ul className="list-none space-y-1">
+          <p className="text-lg font-semibold text-white">Stats:</p>
+          <ul className="list-none space-y-1 text-white">
             {pokemon.stats.map((stat, index) => (
               <li key={index} className="text-lg capitalize">
                 {stat.stat.name}: <span className="font-medium">{stat.base_stat}</span>

@@ -113,9 +113,10 @@ const Home = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
-      {/* Left column for random Pokémon image */}
-      <div className="w-full md:w-1/2 flex justify-center items-center p-4">
+    <main className="flex min-h-screen flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
+      {/* Left column for random Pokémon image and Pokémon List text */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4">
+        <p className="text-4xl font-bold mb-4 text-green-900">Pokémon List</p>
         {randomPokemonImage ? (
           <img
             src={randomPokemonImage}
@@ -128,38 +129,36 @@ const Home = () => {
       </div>
 
       {/* Right column for Pokémon list */}
-      <div className="w-full md:w-1/2 p-4 h-full">
-        <header className="w-full max-w-lg mb-8 flex flex-col items-center">
-          <p className="text-2xl font-bold mb-4 text-gray-800">Pokémon List</p>
-          {/* Pokémon list */}
-          <div className="w-full max-h-[70vh] overflow-y-auto">
-            <ul className="list-disc space-y-4">
-              {pokemons.map((pokemon, index) => (
-                <li key={index} className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md">
-                  <img
-                    src={pokemon.imageUrl}
-                    alt={pokemon.name}
-                    className="w-24 h-24 md:w-28 md:h-28 transform transition-transform hover:scale-125"
-                  />
-                  <a
-                    href={`/details/${pokemon.name}`}
-                    className="text-blue-700 hover:underline text-lg font-medium"
-                  >
-                    {pokemon.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            {nextUrl && (
-              <button
-                onClick={loadMore}
-                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
-              >
-                Load More
-              </button>
-            )}
-          </div>
-        </header>
+      <div className="w-full md:w-1/2 p-4 flex flex-col h-full">
+        <p className="text-xl font-bold mb-4 text-green-900 text-center">Choose your Pokémon</p>
+        {/* Pokémon list */}
+        <div className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
+          <ul className="list-disc space-y-4">
+            {pokemons.map((pokemon, index) => (
+              <li key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-md text-lg ">
+                <img
+                  src={pokemon.imageUrl}
+                  alt={pokemon.name}
+                  className="w-16 h-16 md:w-20 md:h-20 transform transition-transform hover:scale-125"
+                />
+                <a
+                  href={`/details/${pokemon.name}`}
+                  className="text-green-600 text-lg font-medium"
+                >
+                  {pokemon.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {nextUrl && (
+            <button
+              onClick={loadMore}
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
+            >
+              Load More
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Footer */}
