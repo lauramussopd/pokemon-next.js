@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
+// Interface to define the structure of the Pokémon details
 interface PokemonDetails {
   id: number;
   name: string;
@@ -11,7 +12,7 @@ interface PokemonDetails {
   abilities: { ability: { name: string } }[];
   sprites: {
     other: {
-      'official-artwork': {
+      "official-artwork": {
         front_default: string;
         front_shiny: string;
       };
@@ -48,37 +49,45 @@ const PokemonDetailsPage = () => {
     }
   }, [name]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!pokemon) return <p>No data found</p>;
+  if (loading) return <p className="text-center mt-10 text-xl">Loading...</p>;
+  if (error) return <p className="text-center mt-10 text-xl text-red-500">Error: {error}</p>;
+  if (!pokemon) return <p className="text-center mt-10 text-xl">No data found</p>;
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <header className="w-full max-w-5xl mb-8 flex flex-col items-center">
-        <h1 className="text-3xl font-bold mb-4">{pokemon.name}</h1>
-        <div className="mb-4">
-          <img src={pokemon.sprites.other['official-artwork'].front_default} alt={pokemon.name} className="w-64 h-64" />
-          <img src={pokemon.sprites.other['official-artwork'].front_shiny} alt={`${pokemon.name} shiny`} className="w-64 h-64 mt-4" />
+    <main className="flex min-h-screen flex-col items-center p-6 md:p-12 lg:p-24 bg-gray-100">
+      <header className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md mb-8 flex flex-col items-center">
+        <h1 className="text-4xl font-bold capitalize mb-6 text-gray-800">{pokemon.name}</h1>
+        <div className="flex flex-col md:flex-row md:space-x-8 mb-6">
+          <img
+            src={pokemon.sprites.other["official-artwork"].front_default}
+            alt={pokemon.name}
+            className="w-48 h-48 md:w-64 md:h-64 object-contain"
+          />
+          <img
+            src={pokemon.sprites.other["official-artwork"].front_shiny}
+            alt={`${pokemon.name} shiny`}
+            className="w-48 h-48 md:w-64 md:h-64 object-contain mt-4 md:mt-0"
+          />
         </div>
-        <div className="mb-4">
-          <p><strong>ID:</strong> {pokemon.id}</p>
-          <p><strong>Height:</strong> {pokemon.height / 10} m</p>
-          <p><strong>Weight:</strong> {pokemon.weight / 10} kg</p>
+        <div className="text-center space-y-4 mb-6">
+          <p className="text-lg"><strong>ID:</strong> {pokemon.id}</p>
+          <p className="text-lg"><strong>Height:</strong> {pokemon.height / 10} m</p>
+          <p className="text-lg"><strong>Weight:</strong> {pokemon.weight / 10} kg</p>
         </div>
-        <div className="mb-4">
-          <p><strong>Abilities:</strong></p>
-          <ul>
+        <div className="text-center space-y-2 mb-6">
+          <p className="text-lg font-semibold">Abilities:</p>
+          <ul className="list-disc list-inside">
             {pokemon.abilities.map((ability, index) => (
-              <li key={index}>{ability.ability.name}</li>
+              <li key={index} className="text-lg capitalize">{ability.ability.name}</li>
             ))}
           </ul>
         </div>
-        <div className="mb-4">
-          <p><strong>Stats:</strong></p>
-          <ul>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-semibold">Stats:</p>
+          <ul className="list-none space-y-1">
             {pokemon.stats.map((stat, index) => (
-              <li key={index}>
-                {stat.stat.name}: {stat.base_stat}
+              <li key={index} className="text-lg capitalize">
+                {stat.stat.name}: <span className="font-medium">{stat.base_stat}</span>
               </li>
             ))}
           </ul>
@@ -89,6 +98,3 @@ const PokemonDetailsPage = () => {
 };
 
 export default PokemonDetailsPage;
-
-
-

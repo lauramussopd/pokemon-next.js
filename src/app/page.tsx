@@ -3,72 +3,80 @@
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
-// Interfaccia per definire la struttura dei dati del Pokémon
+// Interface for defining the Pokémon data structure
 interface Pokemon {
   name: string;
   url: string;
-  imageUrl?: string; // Proprietà opzionale per l'URL dell'immagine
+  imageUrl?: string; // Optional property for image URL
 }
 
 const Home = () => {
-  // Stati per memorizzare i Pokémon, lo stato di caricamento, gli errori e il termine di ricerca
+  // State to store Pokémon data, loading status, errors, and search term
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [randomPokemonImage, setRandomPokemonImage] = useState<string | null>(null); // New state for random Pokémon image
   const router = useRouter();
 
-  // Effetto per caricare i Pokémon iniziali al montaggio del componente
+  // Effect to load initial Pokémon data when the component mounts
   useEffect(() => {
     const fetchInitialPokemons = async () => {
       setLoading(true);
       try {
-        // Fetch dei primi 20 Pokémon dalla API
+        // Fetch the first 20 Pokémon from the API
         const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
 
-        // Fetch dei dettagli per ogni Pokémon per ottenere l'immagine
+        // Fetch details for each Pokémon to get their images
         const pokemonsWithImages = await Promise.all(
           data.results.map(async (pokemon: Pokemon) => {
-            const res = await fetch(pokemon.url); // Fetch dei dettagli del Pokémon
+            const res = await fetch(pokemon.url);
             const details = await res.json();
             return {
               name: pokemon.name,
               url: pokemon.url,
-              imageUrl: details.sprites.front_default, // URL dell'immagine del Pokémon
+              imageUrl: details.sprites.front_default,
             };
           })
         );
 
-        setPokemons(pokemonsWithImages); // Aggiorna lo stato con i Pokémon e le loro immagini
-        setNextUrl(data.next); // Aggiorna l'URL per caricare ulteriori Pokémon
+        setPokemons(pokemonsWithImages); // Update state with Pokémon and their images
+        setNextUrl(data.next); // Update the URL to load more Pokémon
+
+        // Fetch a random Pokémon for the left image
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        const randomPokemon = data.results[randomIndex];
+        const randomResponse = await fetch(randomPokemon.url);
+        const randomDetails = await randomResponse.json();
+        setRandomPokemonImage(randomDetails.sprites.other['official-artwork'].front_default);
       } catch (error) {
-        setError((error as Error).message); // Gestisce gli errori di rete
+        setError((error as Error).message); // Handle network errors
       } finally {
-        setLoading(false); // Imposta lo stato di caricamento a false
+        setLoading(false); // Set loading state to false
       }
     };
 
-    fetchInitialPokemons(); // Chiama la funzione per ottenere i Pokémon
-  }, []); // Dipendenze vuote, quindi esegue solo al montaggio
+    fetchInitialPokemons(); // Call the function to fetch Pokémon data
+  }, []); // Empty dependencies, so it only runs on mount
 
-  // Funzione per caricare ulteriori Pokémon
+  // Function to load more Pokémon
   const loadMore = async () => {
     if (nextUrl) {
       setLoading(true);
       try {
-        // Fetch dei Pokémon successivi usando l'URL di nextUrl
+        // Fetch the next batch of Pokémon using the nextUrl
         const response = await fetch(nextUrl);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
 
-        // Fetch dei dettagli per i Pokémon aggiuntivi per ottenere le immagini
+        // Fetch details for additional Pokémon to get their images
         const additionalPokemons = await Promise.all(
           data.results.map(async (pokemon: Pokemon) => {
             const res = await fetch(pokemon.url);
@@ -81,76 +89,78 @@ const Home = () => {
           })
         );
 
-        // Aggiunge i nuovi Pokémon allo stato esistente
+        // Append new Pokémon to the existing state
         setPokemons(prevPokemons => [...prevPokemons, ...additionalPokemons]);
-        setNextUrl(data.next); // Aggiorna l'URL per caricare ulteriori Pokémon
+        setNextUrl(data.next); // Update the URL to load more Pokémon
       } catch (error) {
-        setError((error as Error).message); // Gestisce gli errori di rete
+        setError((error as Error).message); // Handle network errors
       } finally {
-        setLoading(false); // Imposta lo stato di caricamento a false
+        setLoading(false); // Set loading state to false
       }
     }
   };
 
-  // Funzione per gestire la ricerca dei Pokémon
+  // Function to handle Pokémon search
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Previene l'invio del modulo
+    event.preventDefault(); // Prevent form submission
     if (searchTerm.trim()) {
-      router.push(`/details/${searchTerm.toLowerCase()}`); // Reindirizza alla pagina dei dettagli del Pokémon
+      router.push(`/details/${searchTerm.toLowerCase()}`); // Redirect to Pokémon details page
     }
   };
 
-  // Condizioni di caricamento ed errore
+  // Loading and error conditions
   if (loading && pokemons.length === 0) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-8 lg:p-16 bg-gray-100">
-      {/* Header con titolo e modulo di ricerca */}
-      <header className="w-full max-w-4xl mb-8 flex flex-col items-center">
-        <p className="text-2xl font-bold mb-4 text-gray-800">Pokémon List</p>
-        <form onSubmit={handleSearch} className="mb-4 w-full max-w-md flex flex-col sm:flex-row items-center">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search Pokémon"
-            className="border border-gray-300 p-2 flex-grow mb-2 sm:mb-0 sm:mr-2 rounded-md shadow-md"
+    <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
+      {/* Left column for random Pokémon image */}
+      <div className="w-full md:w-1/2 flex justify-center items-center p-4">
+        {randomPokemonImage ? (
+          <img
+            src={randomPokemonImage}
+            alt="Random Pokémon"
+            className="w-80 h-80 object-contain"
           />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700">
-            Search
-          </button>
-        </form>
+        ) : (
+          <p>Loading Pokémon image...</p>
+        )}
+      </div>
 
-        {/* Lista dei Pokémon */}
-        <div className="w-full max-w-4xl">
-          <ul className="list-disc space-y-4">
-            {pokemons.map((pokemon, index) => (
-              <li key={index} className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md">
-                <img
-                  src={pokemon.imageUrl}
-                  alt={pokemon.name}
-                  className="w-24 h-24 md:w-28 md:h-28 rounded-full border border-gray-300"
-                />
-                <a
-                  href={`/details/${pokemon.name}`}
-                  className="text-blue-700 hover:underline text-lg font-medium"
-                >
-                  {pokemon.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-          {nextUrl && (
-            <button
-              onClick={loadMore}
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
-            >
-              Load More
-            </button>
-          )}
-        </div>
-      </header>
+      {/* Right column for Pokémon list */}
+      <div className="w-full md:w-1/2 p-4 h-full">
+        <header className="w-full max-w-lg mb-8 flex flex-col items-center">
+          <p className="text-2xl font-bold mb-4 text-gray-800">Pokémon List</p>
+          {/* Pokémon list */}
+          <div className="w-full max-h-[70vh] overflow-y-auto">
+            <ul className="list-disc space-y-4">
+              {pokemons.map((pokemon, index) => (
+                <li key={index} className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md">
+                  <img
+                    src={pokemon.imageUrl}
+                    alt={pokemon.name}
+                    className="w-24 h-24 md:w-28 md:h-28 transform transition-transform hover:scale-125"
+                  />
+                  <a
+                    href={`/details/${pokemon.name}`}
+                    className="text-blue-700 hover:underline text-lg font-medium"
+                  >
+                    {pokemon.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            {nextUrl && (
+              <button
+                onClick={loadMore}
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
+              >
+                Load More
+              </button>
+            )}
+          </div>
+        </header>
+      </div>
 
       {/* Footer */}
       <footer className="fixed bottom-0 left-0 flex w-full justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black">
