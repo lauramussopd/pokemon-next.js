@@ -108,15 +108,20 @@ const Home = () => {
     }
   };
 
+  // Function to handle scrolling to Pokémon list
+  const scrollToPokemonList = () => {
+    document.getElementById('pokemon-list')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Loading and error conditions
   if (loading && pokemons.length === 0) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <main className="flex min-h-screen flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
+    <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
       {/* Left column for random Pokémon image and Pokémon List text */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4">
-        <p className="text-4xl font-bold mb-4 text-green-900">Pokémon List</p>
+        <p className="text-4xl font-bold mb-4 text-green-900">Pokémon List</p> 
         {randomPokemonImage ? (
           <img
             src={randomPokemonImage}
@@ -129,10 +134,15 @@ const Home = () => {
       </div>
 
       {/* Right column for Pokémon list */}
-      <div className="w-full md:w-1/2 p-4 flex flex-col h-full">
-        <p className="text-xl font-bold mb-4 text-green-900 text-center">Choose your Pokémon</p>
+      <div className="w-full md:w-1/2 p-4 h-full">
+        <p 
+          className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer" 
+          onClick={scrollToPokemonList}
+        >
+          Choose your Pokémon
+        </p> 
         {/* Pokémon list */}
-        <div className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
+        <div id="pokemon-list" className="w-full h-screen overflow-y-auto p-10 bg-green-900 rounded-lg">
           <ul className="list-disc space-y-4">
             {pokemons.map((pokemon, index) => (
               <li key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-md text-lg ">
