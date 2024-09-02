@@ -120,13 +120,21 @@ const Home = () => {
   return (
     <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
       {/* Left column for random Pokémon image and Pokémon List text */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4">
-        <p className="text-4xl font-bold mb-4 text-green-900">Pokémon List</p> 
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4 relative">
+        <div
+          className="absolute inset-0 rounded-lg transform rotate-45 -translate-x-1/2 -translate-y-1/2 z-0"
+          style={{
+            width: '150%',
+            height: '150%',
+            background: 'linear-gradient(135deg, #c5f9d7, #f7d486, #f27a7d)',
+          }}
+        ></div>
+        <p className="text-4xl font-bold mb-4 text-green-900 z-10">Pokémon List</p>
         {randomPokemonImage ? (
           <img
             src={randomPokemonImage}
             alt="Random Pokémon"
-            className="w-80 h-80 object-contain"
+            className="w-80 h-80 object-contain z-10"
           />
         ) : (
           <p>Loading Pokémon image...</p>
@@ -134,15 +142,15 @@ const Home = () => {
       </div>
 
       {/* Right column for Pokémon list */}
-      <div className="w-full md:w-1/2 p-4 h-full">
+      <div className="w-full md:w-1/2 p-4 flex flex-col h-full relative z-20">
         <p 
-          className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer" 
+          className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer relative z-10" 
           onClick={scrollToPokemonList}
         >
           Choose your Pokémon
-        </p> 
+        </p>
         {/* Pokémon list */}
-        <div id="pokemon-list" className="w-full h-screen overflow-y-auto p-10 bg-green-900 rounded-lg">
+        <div id="pokemon-list" className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
           <ul className="list-disc space-y-4">
             {pokemons.map((pokemon, index) => (
               <li key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-md text-lg ">
@@ -163,7 +171,7 @@ const Home = () => {
           {nextUrl && (
             <button
               onClick={loadMore}
-              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700"
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-700 z-10"
             >
               Load More
             </button>
@@ -179,7 +187,7 @@ const Home = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <h3 className="text-lg text-gray-600">By Laura Musso</h3>
+          {/*<h3 className="text-lg text-gray-600">By Laura Musso</h3>*/}
         </a>
       </footer>
     </main>
