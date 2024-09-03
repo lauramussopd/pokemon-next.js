@@ -1,16 +1,10 @@
 "use client";
 
-import Link from 'next/link'; // Import Link from next/link
+import Link from 'next/link';
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-// Interface for defining the Pokémon data structure
-interface Pokemon {
-  name: string;
-  url: string;
-  imageUrl?: string; // Optional property for image URL
-}
+import { fetchInitialPokemons, fetchMorePokemons, Pokemon } from "./pokemonService";
 
 const Home = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -19,72 +13,42 @@ const Home = () => {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [randomPokemonImage, setRandomPokemonImage] = useState<string | null>(null); 
+  const [notFound, setNotFound] = useState<boolean>(false); // New state for handling "not found"
   const router = useRouter();
 
   useEffect(() => {
-    const fetchInitialPokemons = async () => {
+    const loadPokemons = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        const { pokemonsWithImages, nextUrl, randomPokemonImage } = await fetchInitialPokemons();
+        if (pokemonsWithImages.length === 0) {
+          setNotFound(true); // Set notFound to true if no pokemons are found
+        } else {
+          setPokemons(pokemonsWithImages);
+          setNextUrl(nextUrl);
+          setRandomPokemonImage(randomPokemonImage);
         }
-        const data = await response.json();
-
-        const pokemonsWithImages = await Promise.all(
-          data.results.map(async (pokemon: Pokemon) => {
-            const res = await fetch(pokemon.url);
-            const details = await res.json();
-            return {
-              name: pokemon.name,
-              url: pokemon.url,
-              imageUrl: details.sprites.front_default,
-            };
-          })
-        );
-
-        setPokemons(pokemonsWithImages); 
-        setNextUrl(data.next); 
-
-        const randomIndex = Math.floor(Math.random() * data.results.length);
-        const randomPokemon = data.results[randomIndex];
-        const randomResponse = await fetch(randomPokemon.url);
-        const randomDetails = await randomResponse.json();
-        setRandomPokemonImage(randomDetails.sprites.other['official-artwork'].front_default);
       } catch (error) {
-        setError((error as Error).message); 
+        setError((error as Error).message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInitialPokemons(); 
+    loadPokemons();
   }, []);
 
   const loadMore = async () => {
     if (nextUrl) {
       setLoading(true);
       try {
-        const response = await fetch(nextUrl);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        const { pokemonsWithImages, nextUrl: newNextUrl } = await fetchMorePokemons(nextUrl);
+        if (pokemonsWithImages.length === 0) {
+          setNotFound(true); // Set notFound to true if no more pokemons are found
+        } else {
+          setPokemons(prevPokemons => [...prevPokemons, ...pokemonsWithImages]);
+          setNextUrl(newNextUrl);
         }
-        const data = await response.json();
-
-        const additionalPokemons = await Promise.all(
-          data.results.map(async (pokemon: Pokemon) => {
-            const res = await fetch(pokemon.url);
-            const details = await res.json();
-            return {
-              name: pokemon.name,
-              url: pokemon.url,
-              imageUrl: details.sprites.front_default,
-            };
-          })
-        );
-
-        setPokemons(prevPokemons => [...prevPokemons, ...additionalPokemons]);
-        setNextUrl(data.next); 
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -94,9 +58,9 @@ const Home = () => {
   };
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); 
+    event.preventDefault();
     if (searchTerm.trim()) {
-      router.push(`/details/${searchTerm.toLowerCase()}`); 
+      router.push(`/details/${searchTerm.toLowerCase()}`);
     }
   };
 
@@ -106,6 +70,7 @@ const Home = () => {
 
   if (loading && pokemons.length === 0) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
+  if (notFound) return <p>No Pokémon found</p>; // Display "not found" message
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
