@@ -2,8 +2,7 @@
 
 export interface Pokemon {
     name: string;
-    url: string;
-    image?: string; // Optional property for image URL
+    url: string; 
   }
   
   export interface PokemonDetails {

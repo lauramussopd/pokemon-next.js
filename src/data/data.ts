@@ -1,6 +1,6 @@
 import { Pokemon } from './definitions';
 
-export async function fetchInitialPokemon(url: string = 'https://pokeapi.co/api/v2/pokemon?limit=20'): Promise<{ pokemonData: Pokemon[], nextUrl: string | null, randomPokemonImage: string | null }> {
+export async function fetchInitialPokemon(url: string = 'https://pokeapi.co/api/v2/pokemon?limit=20'): Promise<{ pokemonData: Pokemon[], nextUrl: string | null }> {
   const res = await fetch(url);
   const data = await res.json();
 
@@ -16,9 +16,8 @@ export async function fetchInitialPokemon(url: string = 'https://pokeapi.co/api/
     })
   );
 
-  const randomPokemonImage = "https://example.com/random-pokemon.png"; // Example image URL
 
-  return { pokemonData, nextUrl: data.next, randomPokemonImage };
+  return { pokemonData, nextUrl: data.next };
 }
 
 export async function fetchMorePokemons(url: string): Promise<{ pokemonData: Pokemon[], nextUrl: string | null }> {
