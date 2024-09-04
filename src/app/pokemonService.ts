@@ -1,4 +1,4 @@
-// pokemonService.ts
+// src/app/pokemonService.ts
 
 // Interface for defining the Pokémon data structure
 export interface Pokemon {

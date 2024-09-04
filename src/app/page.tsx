@@ -1,18 +1,26 @@
+// page.tsx
+
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { fetchInitialPokemons, fetchMorePokemons, Pokemon } from "./pokemonService";
-import NavLinks from './nav-links';
+import {
+  fetchInitialPokemons,
+  fetchMorePokemons,
+  Pokemon,
+} from "./pokemonService";
+import NavLinks from "./nav-links";
 
 const Home = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [randomPokemonImage, setRandomPokemonImage] = useState<string | null>(null); 
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [randomPokemonImage, setRandomPokemonImage] = useState<string | null>(
+    null
+  );
   const [notFound, setNotFound] = useState<boolean>(false); // New state for handling "not found"
   const router = useRouter();
 
@@ -20,7 +28,8 @@ const Home = () => {
     const loadPokemons = async () => {
       setLoading(true);
       try {
-        const { pokemonsWithImages, nextUrl, randomPokemonImage } = await fetchInitialPokemons();
+        const { pokemonsWithImages, nextUrl, randomPokemonImage } =
+          await fetchInitialPokemons();
         if (pokemonsWithImages.length === 0) {
           setNotFound(true); // Set notFound to true if no pokemons are found
         } else {
@@ -42,11 +51,15 @@ const Home = () => {
     if (nextUrl) {
       setLoading(true);
       try {
-        const { pokemonsWithImages, nextUrl: newNextUrl } = await fetchMorePokemons(nextUrl);
+        const { pokemonsWithImages, nextUrl: newNextUrl } =
+          await fetchMorePokemons(nextUrl);
         if (pokemonsWithImages.length === 0) {
           setNotFound(true); // Set notFound to true if no more pokemons are found
         } else {
-          setPokemons(prevPokemons => [...prevPokemons, ...pokemonsWithImages]);
+          setPokemons((prevPokemons) => [
+            ...prevPokemons,
+            ...pokemonsWithImages,
+          ]);
           setNextUrl(newNextUrl);
         }
       } catch (error) {
@@ -65,7 +78,9 @@ const Home = () => {
   };
 
   const scrollToPokemonList = () => {
-    document.getElementById('pokemon-list')?.scrollIntoView({ behavior: 'smooth' });
+    document
+      .getElementById("pokemon-list")
+      ?.scrollIntoView({ behavior: "smooth" });
   };
 
   if (loading && pokemons.length === 0) return <p>Loading...</p>;
@@ -78,17 +93,19 @@ const Home = () => {
         <div
           className="absolute inset-0 rounded-lg transform rotate-45 -translate-x-1/2 -translate-y-1/2 z-0"
           style={{
-            width: '150%',
-            height: '150%',
-            background: 'linear-gradient(135deg, #c5f9d7, #f7d486, #f27a7d)',
+            width: "150%",
+            height: "150%",
+            background: "linear-gradient(135deg, #c5f9d7, #f7d486, #f27a7d)",
           }}
         ></div>
-        <p className="text-4xl font-bold mb-4 text-green-900 z-10">Pokémon List</p>
+        <p className="text-4xl font-bold mb-4 text-green-900 z-10">
+          Pokémon List
+        </p>
         {randomPokemonImage ? (
           <Image
             src={randomPokemonImage}
             alt="Random Pokémon"
-            width={320} 
+            width={320}
             height={320}
             className="object-contain z-10"
           />
@@ -99,15 +116,23 @@ const Home = () => {
 
       {/* Right column for Pokémon list */}
       <div className="w-full md:w-1/2 p-4 flex flex-col h-full relative z-20">
-        <p 
-          className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer relative z-10" 
+        <p
+          className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer relative z-10"
           onClick={scrollToPokemonList}
         >
           Choose your Pokémon
         </p>
         {/* Pokémon list */}
-        <div id="pokemon-list" className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
-          <NavLinks pokemons={pokemons} />
+        <div
+          id="pokemon-list"
+          className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg"
+        >
+          <NavLinks
+            pokemons={pokemons.map((pokemon) => ({
+              name: pokemon.name,
+              imageUrl: pokemon.imageUrl || "/path/to/placeholder/image.png", // Fornisci un valore di fallback
+            }))}
+          />
           {nextUrl && (
             <button
               onClick={loadMore}
