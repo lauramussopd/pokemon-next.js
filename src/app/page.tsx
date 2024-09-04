@@ -8,7 +8,7 @@ import { fetchInitialPokemon, fetchMorePokemons } from "../data/data";
 import { Pokemon } from "../data/definitions";
 import LoadingSpinner from "../components/loadingSpinner";
 
-const PIKACHU_IMAGE_URL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"; // Pikachu's image URL
+const PIKACHU_IMAGE_URL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png";
 
 const Home = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -16,7 +16,7 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [notFound, setNotFound] = useState<boolean>(false); // New state for handling "not found"
+
   const router = useRouter();
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Home = () => {
       try {
         const { pokemonData, nextUrl } = await fetchInitialPokemon();
         if (pokemonData.length === 0) {
-          setNotFound(true); // Set notFound to true if no pokemons are found
+          setError("No Pokémon found");
         } else {
           setPokemons(pokemonData);
           setNextUrl(nextUrl);
@@ -45,15 +45,8 @@ const Home = () => {
       setLoading(true);
       try {
         const { pokemonData, nextUrl: newNextUrl } = await fetchMorePokemons(nextUrl);
-        if (pokemonData.length === 0) {
-          setNotFound(true); // Set notFound to true if no more pokemons are found
-        } else {
-          setPokemons((prevPokemons) => [
-            ...prevPokemons,
-            ...pokemonData,
-          ]);
-          setNextUrl(newNextUrl);
-        }
+        setPokemons(prevPokemons => [...prevPokemons, ...pokemonData]);
+        setNextUrl(newNextUrl);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -70,12 +63,10 @@ const Home = () => {
   };
 
   const scrollToPokemonList = () => {
-    document
-      .getElementById("pokemon-list")
-      ?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("pokemon-list")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  if (loading && pokemons.length === 0) return <LoadingSpinner/>;
+  if (loading && pokemons.length === 0) return <LoadingSpinner />;
   if (error) return <p>Error: {error}</p>;
 
   return (
@@ -83,26 +74,12 @@ const Home = () => {
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-4 relative">
         <div
           className="absolute inset-0 rounded-lg transform rotate-45 -translate-x-1/2 -translate-y-1/2 z-0"
-          style={{
-            width: "150%",
-            height: "150%",
-            background: "linear-gradient(135deg, #c5f9d7, #f7d486, #f27a7d)",
-          }}
-        ></div>
-        <p className="text-4xl font-bold mb-4 text-green-900 z-10">
-          Pokémon List
-        </p>
-        <Image
-          src={PIKACHU_IMAGE_URL}
-          alt="Pikachu"
-          width={320}
-          height={320}
-          className="object-contain z-10"
-          priority
+          style={{ width: "150%", height: "150%", background: "linear-gradient(135deg, #c5f9d7, #f7d486, #f27a7d)" }}
         />
+        <p className="text-4xl font-bold mb-4 text-green-900 z-10">Pokémon List</p>
+        <Image src={PIKACHU_IMAGE_URL} alt="Pikachu" width={320} height={320} className="object-contain z-10" priority />
       </div>
 
-      {/* Right column for Pokémon list */}
       <div className="w-full md:w-1/2 p-4 flex flex-col h-full relative z-20">
         <p
           className="text-xl font-bold mb-4 text-green-900 text-center cursor-pointer relative z-10"
@@ -110,15 +87,11 @@ const Home = () => {
         >
           Choose your Pokémon
         </p>
-        {/* Pokémon list */}
-        <div
-          id="pokemon-list"
-          className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg"
-        >
+        <div id="pokemon-list" className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
           <NavLinks
-            pokemons={pokemons.map((pokemon) => ({
+            pokemons={pokemons.map(pokemon => ({
               name: pokemon.name,
-              imageUrl: pokemon.image || "/path/to/placeholder/image.png", // Provide fallback value
+              imageUrl: pokemon.image || "/path/to/placeholder/image.png",
             }))}
           />
           {nextUrl && (
@@ -132,7 +105,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="fixed bottom-0 left-0 flex w-full justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black">
         <a
           className="flex items-center gap-2 p-4"
