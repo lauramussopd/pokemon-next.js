@@ -1,10 +1,10 @@
 "use client";
 
-import Link from 'next/link';
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { fetchInitialPokemons, fetchMorePokemons, Pokemon } from "./pokemonService";
+import NavLinks from './nav-links';
 
 const Home = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -107,22 +107,7 @@ const Home = () => {
         </p>
         {/* Pokémon list */}
         <div id="pokemon-list" className="flex-1 overflow-y-auto p-10 bg-green-900 rounded-lg">
-          <ul className="list-disc space-y-4">
-            {pokemons.map((pokemon, index) => (
-              <li key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-md text-lg ">
-                <Image
-                  src={pokemon.imageUrl || ""}
-                  alt={pokemon.name}
-                  width={80}
-                  height={80}
-                  className="w-16 h-16 md:w-20 md:h-20 transform transition-transform hover:scale-125 cursor-pointer"
-                />
-                <Link href={`/details/${pokemon.name}`} className="text-green-600 text-lg font-medium">
-                  {pokemon.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <NavLinks pokemons={pokemons} />
           {nextUrl && (
             <button
               onClick={loadMore}
