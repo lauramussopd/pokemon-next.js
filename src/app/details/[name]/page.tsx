@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { montserrat } from "./../../fonts";
+import { montserrat } from "../../fonts";
+import LoadingSpinner from "@/components/loadingSpinner";
 
 // Interface to define the structure of the Pokémon details
 interface PokemonDetails {
@@ -52,7 +53,7 @@ const PokemonDetailsPage = () => {
     }
   }, [name]);
 
-  if (loading) return <p className="text-center mt-10 text-lg">Loading...</p>;
+  if (loading) return <LoadingSpinner/>;
   if (error) return <p className="text-center mt-10 text-lg text-red-500">Error: {error}</p>;
   if (!pokemon) return <p className="text-center mt-10 text-lg">No data found</p>;
 

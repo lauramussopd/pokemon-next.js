@@ -1,16 +1,14 @@
-// page.tsx
-
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  fetchInitialPokemons,
-  fetchMorePokemons,
-  Pokemon,
-} from "./pokemonService";
-import NavLinks from "./nav-links";
+import NavLinks from "../components/nav-links";
+import { fetchInitialPokemon, fetchMorePokemons } from "../data/data";
+import { Pokemon } from "../data/definitions";
+import LoadingSpinner from "../components/loadingSpinner";
+
+const PIKACHU_IMAGE_URL = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"; // Pikachu's image URL
 
 const Home = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -18,9 +16,6 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [randomPokemonImage, setRandomPokemonImage] = useState<string | null>(
-    null
-  );
   const [notFound, setNotFound] = useState<boolean>(false); // New state for handling "not found"
   const router = useRouter();
 
@@ -28,14 +23,12 @@ const Home = () => {
     const loadPokemons = async () => {
       setLoading(true);
       try {
-        const { pokemonsWithImages, nextUrl, randomPokemonImage } =
-          await fetchInitialPokemons();
-        if (pokemonsWithImages.length === 0) {
+        const { pokemonData, nextUrl } = await fetchInitialPokemon();
+        if (pokemonData.length === 0) {
           setNotFound(true); // Set notFound to true if no pokemons are found
         } else {
-          setPokemons(pokemonsWithImages);
+          setPokemons(pokemonData);
           setNextUrl(nextUrl);
-          setRandomPokemonImage(randomPokemonImage);
         }
       } catch (error) {
         setError((error as Error).message);
@@ -51,14 +44,13 @@ const Home = () => {
     if (nextUrl) {
       setLoading(true);
       try {
-        const { pokemonsWithImages, nextUrl: newNextUrl } =
-          await fetchMorePokemons(nextUrl);
-        if (pokemonsWithImages.length === 0) {
+        const { pokemonData, nextUrl: newNextUrl } = await fetchMorePokemons(nextUrl);
+        if (pokemonData.length === 0) {
           setNotFound(true); // Set notFound to true if no more pokemons are found
         } else {
           setPokemons((prevPokemons) => [
             ...prevPokemons,
-            ...pokemonsWithImages,
+            ...pokemonData,
           ]);
           setNextUrl(newNextUrl);
         }
@@ -83,9 +75,8 @@ const Home = () => {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  if (loading && pokemons.length === 0) return <p>Loading...</p>;
+  if (loading && pokemons.length === 0) return <LoadingSpinner/>;
   if (error) return <p>Error: {error}</p>;
-  if (notFound) return <p>No Pokémon found</p>; // Display "not found" message
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden flex-col md:flex-row items-center p-4 md:p-8 lg:p-16 bg-gray-100">
@@ -101,17 +92,14 @@ const Home = () => {
         <p className="text-4xl font-bold mb-4 text-green-900 z-10">
           Pokémon List
         </p>
-        {randomPokemonImage ? (
-          <Image
-            src={randomPokemonImage}
-            alt="Random Pokémon"
-            width={320}
-            height={320}
-            className="object-contain z-10"
-          />
-        ) : (
-          <p>Loading Pokémon image...</p>
-        )}
+        <Image
+          src={PIKACHU_IMAGE_URL}
+          alt="Pikachu"
+          width={320}
+          height={320}
+          className="object-contain z-10"
+          priority
+        />
       </div>
 
       {/* Right column for Pokémon list */}
@@ -130,7 +118,7 @@ const Home = () => {
           <NavLinks
             pokemons={pokemons.map((pokemon) => ({
               name: pokemon.name,
-              imageUrl: pokemon.imageUrl || "/path/to/placeholder/image.png", // Fornisci un valore di fallback
+              imageUrl: pokemon.image || "/path/to/placeholder/image.png", // Provide fallback value
             }))}
           />
           {nextUrl && (
