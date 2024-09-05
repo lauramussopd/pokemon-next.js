@@ -23,18 +23,18 @@ const NavLinks = ({ pokemons }: { pokemons: { name: string; imageUrl: string }[]
             className={`transition-transform duration-300 ${
               pathname === `/details/${pokemon.name.toLowerCase()}`
                 ? 'hover:scale-120'
-                : 'hover:scale-125'
+                : 'hover:scale-140'
             }`}
           >
-            <Image
+          </div>
+          <span className="text-center items-center flex-1">
+          <Image
               src={pokemon.imageUrl}
               alt={pokemon.name}
-              width={50}
-              height={50}
+              width={100}
+              height={100}
               className="rounded-full"
-            />
-          </div>
-          <span>{pokemon.name}</span>
+            />{pokemon.name}</span>
         </Link>
       ))}
     </div>

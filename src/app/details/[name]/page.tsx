@@ -26,7 +26,7 @@ interface PokemonDetails {
 
 const PokemonDetailsPage = () => {
   const { name } = useParams();
-  const router = useRouter(); // Use the router hook for navigation
+  const router = useRouter(); 
   const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

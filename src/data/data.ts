@@ -1,40 +1,31 @@
-import { Pokemon } from './definitions';
+import { Pokemon, PokemonDetails } from './definitions';
 
-export async function fetchInitialPokemon(url: string = 'https://pokeapi.co/api/v2/pokemon?limit=20'): Promise<{ pokemonData: Pokemon[], nextUrl: string | null }> {
-  const res = await fetch(url);
-  const data = await res.json();
-
-  const pokemonData = await Promise.all(
-    data.results.map(async (p: any) => {
-      const pokemonRes = await fetch(p.url);
-      const pokemonDetails = await pokemonRes.json();
-      return {
-        name: p.name,
-        url: p.url,
-        image: pokemonDetails.sprites.front_default,
-      };
-    })
-  );
-
-
-  return { pokemonData, nextUrl: data.next };
-}
-
-export async function fetchMorePokemons(url: string): Promise<{ pokemonData: Pokemon[], nextUrl: string | null }> {
-  const res = await fetch(url);
-  const data = await res.json();
+export const fetchInitialPokemon = async () => {
+  const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=20');
+  const data = await response.json();
 
   const pokemonData = await Promise.all(
-    data.results.map(async (p: any) => {
-      const pokemonRes = await fetch(p.url);
-      const pokemonDetails = await pokemonRes.json();
-      return {
-        name: p.name,
-        url: p.url,
-        image: pokemonDetails.sprites.front_default,
-      };
+    data.results.map(async (pokemon: Pokemon) => {
+      const detailsResponse = await fetch(pokemon.url);
+      const details: PokemonDetails = await detailsResponse.json();
+      return details;  // Restituisci dettagli completi
     })
   );
 
   return { pokemonData, nextUrl: data.next };
-}
+};
+
+export const fetchMorePokemons = async (nextUrl: string) => {
+  const response = await fetch(nextUrl);
+  const data = await response.json();
+
+  const pokemonData = await Promise.all(
+    data.results.map(async (pokemon: Pokemon) => {
+      const detailsResponse = await fetch(pokemon.url);
+      const details: PokemonDetails = await detailsResponse.json();
+      return details;  // Restituisci dettagli completi
+    })
+  );
+
+  return { pokemonData, nextUrl: data.next };
+};

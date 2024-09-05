@@ -1,9 +1,9 @@
 // src/app/definitions.ts
 
 export interface Pokemon {
-    name: string;
-    url: string; 
-  }
+  name: string;
+  url: string;
+}
   
   export interface PokemonDetails {
     name: string;
