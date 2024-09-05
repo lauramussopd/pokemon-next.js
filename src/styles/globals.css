@@ -89,4 +89,18 @@ body {
 	max-height:90%;
   /* padding-left:3rem; */
 }
+.mirror{
+	transform: scaleX(-1);
+}
 
+.custom-overflow{
+  padding-bottom: 200px;
+}
+
+.custom-overflow::-webkit-scrollbar {
+  display:none ;
+}
+
+.custom-background  {
+  background: linear-gradient(135deg, rgb(197, 249, 215), rgb(247, 212, 134), rgb(242, 122, 125))
+}

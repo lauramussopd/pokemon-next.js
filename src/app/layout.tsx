@@ -19,7 +19,7 @@ export default function RootLayout({
               <p className="text-sm">by Laura Musso</p>
             </span>
           </header>
-          <div className="flex-1 overflow-hidden">{children}</div>
+          <div className="flex-1">{children}</div>
         </main>
       </body>
     </html>

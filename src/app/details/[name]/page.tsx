@@ -58,15 +58,15 @@ const PokemonDetailsPage = () => {
   if (!pokemon) return <p className="text-center mt-10 text-lg">No data found</p>;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-6 lg:p-8 bg-gray-100">
-      <header className="w-full max-w-4xl bg-green-900 p-6 rounded-lg shadow-md mb-6">
+    <main className="flex flex-col items-center justify-center p-4 md:p-6 lg:p-8 bg-gray-100">
+      <div className="w-full max-w-4xl p-6 rounded-lg shadow-md mb-6 custom-overflow min-h-screen h-screen overflow-scroll overflow-x-hidden custom-background">
         <button
-          onClick={() => router.push('/')} // Navigate back to home page
+          onClick={() => router.push('/')} 
           className="mb-6 text-white bg-[rgb(242,122,125)] hover:bg-[rgb(220,100,102)] px-4 py-2 rounded-lg"
         >
           Back to Home
         </button>
-        <h1 className="text-3xl font-bold capitalize mb-6 text-white text-center">{pokemon.name}</h1>
+        <h1 className="text-3xl font-bold capitalize mb-6 text-green-900 text-center">{pokemon.name}</h1>
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${montserrat.className} antialiased`}>
           <div className="bg-white p-5 rounded-lg shadow-md flex flex-col items-center">
             <div className="flex flex-col items-center justify-center h-full">
@@ -80,6 +80,7 @@ const PokemonDetailsPage = () => {
               </div>
               <div className="relative w-48 h-48">
                 <Image
+                className="mirror"
                   src={pokemon.sprites.other["official-artwork"].front_shiny}
                   alt={`${pokemon.name} shiny`}
                   layout="fill"
@@ -89,23 +90,23 @@ const PokemonDetailsPage = () => {
             </div>
           </div>
           <div className="flex flex-col space-y-4">
-            <div className="bg-white p-5 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-3 text-gray-800">Details</h2>
-              <p className="text-base text-gray-700 mb-1">ID: {pokemon.id}</p>
-              <p className="text-base text-gray-700 mb-1">Height: {pokemon.height / 10} m</p>
-              <p className="text-base text-gray-700 mb-1">Weight: {pokemon.weight / 10} kg</p>
+            <div className="bg-white p-5 rounded-lg shadow-md text-green-900">
+              <h2 className="text-xl font-semibold mb-3">Details</h2>
+              <p className="text-base mb-1">ID: {pokemon.id}</p>
+              <p className="text-base mb-1">Height: {pokemon.height / 10} m</p>
+              <p className="text-base mb-1">Weight: {pokemon.weight / 10} kg</p>
             </div>
-            <div className="bg-white p-5 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-3 text-gray-800">Abilities</h2>
-              <ul className="list-disc list-inside text-gray-700 text-base">
+            <div className="bg-white p-5 rounded-lg shadow-md text-green-900">
+              <h2 className="text-xl font-semibold mb-3">Abilities</h2>
+              <ul className="list-disc list-inside text-base">
                 {pokemon.abilities.map((ability, index) => (
                   <li key={index} className="capitalize">{ability.ability.name}</li>
                 ))}
               </ul>
             </div>
-            <div className="bg-white p-5 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold mb-3 text-gray-800">Stats</h2>
-              <ul className="list-none space-y-1 text-gray-700 text-base">
+            <div className="bg-white p-5 rounded-lg shadow-md text-green-900">
+              <h2 className="text-xl font-semibold mb-3 ">Stats</h2>
+              <ul className="list-none space-y-1  text-base">
                 {pokemon.stats.map((stat, index) => (
                   <li key={index} className="capitalize">
                     {stat.stat.name}: <span className="font-medium">{stat.base_stat}</span>
@@ -115,7 +116,7 @@ const PokemonDetailsPage = () => {
             </div>
           </div>
         </div>
-      </header>
+      </div>
     </main>
   );
 };
