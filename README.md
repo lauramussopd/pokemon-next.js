@@ -1,3 +1,4 @@
+
 ## Getting Started
 
 First:
@@ -5,7 +6,6 @@ First:
 npm install
 
 then, run the development server:
-
 ```bash
 npm run dev
 # or
