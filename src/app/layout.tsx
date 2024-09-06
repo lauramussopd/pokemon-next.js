@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import "../styles/globals.css";
 import { bungee, montserrat } from "./fonts";
 

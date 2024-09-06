@@ -11,8 +11,6 @@ import LoadingSpinner from "../components/loadingSpinner";
 const PIKACHU_IMAGE_URL =
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png";
 
-
-
 const Home = () => {
   const [pokemons, setPokemons] = useState<PokemonDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,7 +58,6 @@ const Home = () => {
       }
     }
   };
-
 
   const scrollToPokemonList = () => {
     document
@@ -110,7 +107,6 @@ const Home = () => {
             priority
           />
         </div>
-        
       </div>
 
       <div className="w-full md:w-1/2 flex flex-col h-full relative z-20 items-center">
@@ -124,10 +120,7 @@ const Home = () => {
             </button>
           </div>
         )} */}
-        <div
-          id="pokemon-list"
-          className="flex-1 overflow-y-auto p-10 w-full "
-        >
+        <div id="pokemon-list" className="flex-1 overflow-y-auto p-10 w-full ">
           <NavLinks
             pokemons={pokemons.map((pokemon) => ({
               name: pokemon.name,
@@ -137,7 +130,7 @@ const Home = () => {
           {nextUrl && (
             <button
               onClick={loadMore}
-              className="mt-4 text-white px-4 py-2 rounded-md shadow-md bg-[rgb(242,122,125)] hover:bg-[rgb(220,100,102)] z-10 card"
+              className="mt-4 px-4 py-2 text-green-900  rounded-md shadow-md hover:bg-[rgb(220,100,102)] z-10 card flex-1 overflow-y-auto p-10 w-full mt-10"
             >
               Load More
             </button>
