@@ -5,6 +5,8 @@ First:
 
 npm install
 
+cd laura-musso-bling-web-test
+
 then, run the development server:
 ```bash
 npm run dev
